@@ -46,9 +46,9 @@ def test_parse_order():
         assert isinstance(parsed_lines, dict)
         
         for entry in parsed_lines.items():
-
-            if isinstance(entry, str):
-                assert entry.casefold() == entry
+            _, maybe_str = entry
+            if isinstance(maybe_str, str):
+                assert maybe_str.casefold() == maybe_str
 
         assert isinstance(parsed_lines["tags"], set)    # including order 4 & 6
 
@@ -85,7 +85,8 @@ def test_top_skus_by_revenue():
     for _, amount in max_revenues:
         amounts.append(amount)
     assert max(amounts) == amounts[0]
-    assert min(amounts) == amounts[3]
+    
+    assert top_skus_by_revenue(aggregated, n=2) == [("oxford", 283.86), ("polo", 120.69)]
 
 
     

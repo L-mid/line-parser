@@ -38,7 +38,7 @@ def parse_kv_line(line: str) -> dict:
             v = float(v)
 
         if k in parsed:
-            return ValueError(f"Duplicate key found: {k}.") 
+            raise ValueError(f"Duplicate key found: {k}.") 
         parsed[k] = v  
 
     return parsed
@@ -55,7 +55,8 @@ def normalize_tags(raw: str | None) -> set[str]:
     tags_set = set()
     for tag in tags:
         tag = tag.strip().casefold()
-        tags_set.add(tag)
+        if tag:
+            tags_set.add(tag)
 
     return tags_set
 
@@ -119,19 +120,10 @@ def top_skus_by_revenue(agg: dict, n: int) -> List[Tuple[str, float]]:
     #   sku asc (tie-breaker)
 
     revenues = []
-    remaining = n
     for sku in agg:
-        remaining -= 1
         revenues.append((sku, agg[sku]["revenue"]))
-
-        if remaining == 0:
-            break
-
-    if len(revenues) != n:
-        #hmmm
-        pass
     
-    top_revenues = sorted(revenues, key=lambda x: (-x[1], x[0]))
+    top_revenues = sorted(revenues, key=lambda x: (-x[1], x[0]))[:n]
     
     return top_revenues
 
